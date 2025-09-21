@@ -1,0 +1,114 @@
+DESCRIPTION                                                        AI-Powered Resume Screening API 
+
+Developed a scalable resume parsing API using Flask with NLP-based keyword matching and scoring engine. 
+Integrated JWT authentication and JSON endpoints for real-time ATS-like evaluations
+
+This is a working demo of an **AI-Powered Resume Screening API** built with Python and Flask. It parses resumes, extracts structured data using NLP/regex, and scores a resume against a job description based on keyword overlap, TF-IDF similarity and basic matching of required skills.
+
+
+## ✅ What it does (current state)
+
+- Accepts resume file uploads (PDF, TXT, DOCX, images with OCR support)  
+- Extracts fields: email, phone numbers, name, skills, total experience (if present)  
+- Allows matching uploaded resume against a job description to compute a score (skill overlap + text similarity)  
+- Has authentication (JWT) for protected endpoints  
+- Fully working locally: upload, parse, match endpoints return correct JSON
+
+
+## ⚠ Limitations / Known Issues
+
+- Experience extraction is simplistic (relies on explicit “X years” in text)  
+- Skills list is hard-coded; does not catch synonyms or fuzzy variants  
+- Auth strictness previously caused “Subject must be string” errors due to PyJWT version; project now uses PyJWT < 2.10 and ensures identity is string, and sets `JWT_VERIFY_SUB = False`  
+- OCR performance may vary if resume is scanned image, has non-standard fonts or layouts 
+
+📁 Repository Structure
+
+resume-screening-demo/
+├── app.py # main Flask application with endpoints
+├── test_api.py # script to test register / login / upload / match flow
+├── requirements.txt # dependencies
+├── README.md # this file
+├── .gitignore # files / folders to ignore in Git
+├── uploads/ # folder where uploaded resumes are saved (ignored in git)
+├── venv/ # virtual environment (ignored in git)
+├── <your-resume>.pdf # sample resume file used for testing
+└── etc.
+ Use this to run the project yourself:
+
+1. Clone the repo  
+   ```bash
+   git clone https://github.com/<yourusername>/<your-repo-name>.git
+   cd <your-repo-name>
+
+2. Create and activate virtual environment (Windows):
+
+   python -m venv venv
+   venv\Scripts\activate
+
+3. Install dependencies:
+    
+   pip install --upgrade pip
+   pip install -r requirements.txt
+
+4. Install spacy English model(needed for name extraction etc):
+   
+   pip install --upgrade pip
+   pip install -r requirements.txt
+
+5.If using OCR (images/scanned resumes), install Tesseract OCR          system in Windows and update the path in app.py at:
+
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
+6.Start the Flask server:
+
+  python app.py
+ 
+7.In a separate terminal (with venv active), run the test script:
+  
+  python test_api.py
+
+This will execute:
+
+Registration (or show user exists if already created)
+
+Login → get token
+
+Upload resume (using your sample PDF)
+
+Match resume against a job description → returns score & parsed data
+
+
+Example Output
+
+After uploading & matching, you should see something like:
+
+ {
+  "parsed": {
+    "emails": ["your.email@example.com"],
+    "name": "Your Name",
+    "phones": [ ... ],
+    "skills": ["python", "flask", "sql", ...],
+    "total_experience_years": null
+  },
+  "scores": {
+    "final_score": 0.85,
+    "breakdown": {
+      "skill_score": 1.0,
+      "experience_score": 1.0,
+      "tfidf_similarity": 0.33,
+      "embedding_similarity": null
+    },
+    "matched_skills": [...],
+    "required_skills": [...]
+  }
+}
+
+
+
+
+  
+  
+   
+
+  
